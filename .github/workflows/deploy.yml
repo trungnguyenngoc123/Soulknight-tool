@@ -1,0 +1,37 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"] # Đổi thành "master" nếu branch chính của bạn là master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Thiết lập GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload toàn bộ thư mục web
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Thư mục chứa index.html
+
+      - name: Deploy lên Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
