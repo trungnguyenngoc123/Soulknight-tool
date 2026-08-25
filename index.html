@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soul Knight Save Modifier</title>
+    <style>
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: #0f172a; color: #f8fafc; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .card { background: #1e293b; width: 100%; max-width: 480px; padding: 24px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h2 { margin-top: 0; color: #38bdf8; text-align: center; font-size: 1.4rem; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #cbd5e1; }
+        input[type="file"] { width: 100%; padding: 10px; background: #334155; border-radius: 8px; border: 1px dashed #64748b; color: #e2e8f0; }
+        .options { background: #334155; padding: 14px; border-radius: 10px; display: flex; flex-direction: column; gap: 12px; }
+        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; }
+        input[type="checkbox"] { width: 18px; height: 18px; accent-color: #38bdf8; }
+        button { width: 100%; padding: 14px; background: #0284c7; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        button:active { transform: scale(0.98); background: #0369a1; }
+        #log { margin-top: 16px; padding: 12px; background: #0f172a; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: #a5f3fc; white-space: pre-wrap; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Soul Knight Save Mod</h2>
+    
+    <div class="form-group">
+        <label for="xmlFileInput">1. Chọn file XML save game:</label>
+        <input type="file" id="xmlFileInput" accept=".xml">
+    </div>
+
+    <div class="form-group">
+        <label>2. Tùy chọn tính năng:</label>
+        <div class="options">
+            <label class="checkbox-label">
+                <input type="checkbox" id="optChar" checked> Mở khóa Full Nhân vật
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="optSkin" checked> Mở khóa Full Skin
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="optSkill" checked> Mở khóa Full Kỹ năng
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="optLevel"> Max Level Nhân vật (= 8)
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="optPet"> Mở khóa Full Thú cưng
+            </label>
+        </div>
+    </div>
+
+    <button id="processBtn">Thực hiện & Tải về</button>
+    <div id="log"></div>
+</div>
+
+<script>
+document.getElementById('processBtn').addEventListener('click', () => {
+    const fileInput = document.getElementById('xmlFileInput');
+    const logBox = document.getElementById('log');
+
+    if (!fileInput.files.length) {
+        alert('Vui lòng chọn 1 file XML trước!');
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+        let content = e.target.result;
+        
+        // Tìm Target UID để sửa đúng tài khoản đang active
+        let activeUidMatch = content.match(/<string name="last_chilly_uid">(\d+)<\/string>/) 
+                          || content.match(/<string name="last_account_id">(\d+)<\/string>/);
+        let targetUidPattern = activeUidMatch ? activeUidMatch[1] : '\\d+';
+
+        const isChar = document.getElementById('optChar').checked;
+        const isSkin = document.getElementById('optSkin').checked;
+        const isSkill = document.getElementById('optSkill').checked;
+        const isLevel = document.getElementById('optLevel').checked;
+        const isPet = document.getElementById('optPet').checked;
+
+        // Xử lý Regex an toàn
+        if (isChar) {
+            const regex = new RegExp(`(<string name="${targetUidPattern}_c\\d+_unlock">)(.*?)(<\\/string>)`, 'g');
+            content = content.replace(regex, '$1True$3');
+        }
+        if (isPet) {
+            const regex = new RegExp(`(<string name="${targetUidPattern}_p\\d+_unlock">)(.*?)(<\\/string>)`, 'g');
+            content = content.replace(regex, '$1True$3');
+        }
+        if (isSkin) {
+            const regex = new RegExp(`(<int name="${targetUidPattern}_c\\d+_skin\\d+" value=")([^"]+)(" \\/>)`, 'g');
+            content = content.replace(regex, '$11$3');
+        }
+        if (isSkill) {
+            const regex = new RegExp(`(<int name="${targetUidPattern}_c_.*?_skill_\\d+_unlock" value=")([^"]+)(" \\/>)`, 'g');
+            content = content.replace(regex, '$11$3');
+        }
+        if (isLevel) {
+            const regex = new RegExp(`(<int name="${targetUidPattern}_c\\d+_level" value=")([^"]+)(" \\/>)`, 'g');
+            content = content.replace(regex, '$18$3');
+        }
+
+        // Tạo link tự động tải file đã sửa về máy
+        const blob = new Blob([content], { type: 'text/xml;charset=utf-8' });
+        const downloadUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = file.name.replace('.xml', '_modded.xml');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(downloadUrl);
+
+        logBox.style.display = 'block';
+        logBox.textContent = `✔ Đã xử lý xong UID: ${activeUidMatch ? activeUidMatch[1] : 'All'}\n✔ File đã được tải xuống máy!`;
+    };
+
+    reader.readAsText(file);
+});
+</script>
+
+</body>
+</html>
