@@ -4,124 +4,178 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soul Knight Save Modifier</title>
-    <style>
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background: #0f172a; color: #f8fafc; display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .card { background: #1e293b; width: 100%; max-width: 480px; padding: 24px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        h2 { margin-top: 0; color: #38bdf8; text-align: center; font-size: 1.4rem; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #cbd5e1; }
-        input[type="file"] { width: 100%; padding: 10px; background: #334155; border-radius: 8px; border: 1px dashed #64748b; color: #e2e8f0; }
-        .options { background: #334155; padding: 14px; border-radius: 10px; display: flex; flex-direction: column; gap: 12px; }
-        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; }
-        input[type="checkbox"] { width: 18px; height: 18px; accent-color: #38bdf8; }
-        button { width: 100%; padding: 14px; background: #0284c7; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        button:active { transform: scale(0.98); background: #0369a1; }
-        #log { margin-top: 16px; padding: 12px; background: #0f172a; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: #a5f3fc; white-space: pre-wrap; display: none; }
-    </style>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0b0f19',
+                            800: '#111827',
+                            700: '#1f2937',
+                            600: '#374151'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
+<body class="bg-dark-900 text-slate-100 min-h-screen flex items-center justify-center p-4 antialiased selection:bg-cyan-500 selection:text-white">
 
-<div class="card">
-    <h2>Soul Knight Save Mod</h2>
-    
-    <div class="form-group">
-        <label for="xmlFileInput">1. Chọn file XML save game:</label>
-        <input type="file" id="xmlFileInput" accept=".xml">
-    </div>
+    <div class="w-full max-w-lg bg-dark-800 border border-slate-800/80 rounded-2xl shadow-2xl shadow-black/50 p-6 md:p-8 backdrop-blur-xl">
+        
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 mb-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Soul Knight Save Modifier</h1>
+            <p class="text-slate-400 text-sm mt-1">Chỉnh sửa file XML lưu trữ an toàn ngay trên trình duyệt</p>
+        </div>
 
-    <div class="form-group">
-        <label>2. Tùy chọn tính năng:</label>
-        <div class="options">
-            <label class="checkbox-label">
-                <input type="checkbox" id="optChar" checked> Mở khóa Full Nhân vật
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="optSkin" checked> Mở khóa Full Skin
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="optSkill" checked> Mở khóa Full Kỹ năng
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="optLevel"> Max Level Nhân vật (= 8)
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="optPet"> Mở khóa Full Thú cưng
+        <!-- File Upload Section -->
+        <div class="mb-6">
+            <label class="block text-sm font-semibold text-slate-300 mb-2">1. Chọn file XML lưu trữ:</label>
+            <label class="group relative flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-700 rounded-xl cursor-pointer bg-dark-700/40 hover:bg-dark-700/70 hover:border-cyan-500/50 transition duration-200">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+                    <svg class="w-7 h-7 mb-2 text-slate-400 group-hover:text-cyan-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p id="fileNameDisplay" class="text-xs text-slate-400 group-hover:text-slate-200">
+                        <span class="font-semibold text-cyan-400">Nhấn để tải lên</span> hoặc kéo thả file .xml vào đây
+                    </p>
+                </div>
+                <input type="file" id="xmlFileInput" accept=".xml" class="hidden">
             </label>
         </div>
+
+        <!-- Options Section -->
+        <div class="mb-6">
+            <label class="block text-sm font-semibold text-slate-300 mb-2">2. Tùy chọn mở khóa:</label>
+            <div class="bg-dark-700/40 border border-slate-700/60 rounded-xl p-4 space-y-3">
+                
+                <label class="flex items-center gap-3 cursor-pointer select-none group">
+                    <input type="checkbox" id="optChar" checked class="w-4 h-4 rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500/30 focus:ring-offset-0 transition cursor-pointer">
+                    <span class="text-sm text-slate-300 group-hover:text-white transition">Mở khóa Full Nhân vật</span>
+                </label>
+
+                <label class="flex items-center gap-3 cursor-pointer select-none group">
+                    <input type="checkbox" id="optSkin" checked class="w-4 h-4 rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500/30 focus:ring-offset-0 transition cursor-pointer">
+                    <span class="text-sm text-slate-300 group-hover:text-white transition">Mở khóa Full Trang phục (Skin)</span>
+                </label>
+
+                <label class="flex items-center gap-3 cursor-pointer select-none group">
+                    <input type="checkbox" id="optSkill" checked class="w-4 h-4 rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500/30 focus:ring-offset-0 transition cursor-pointer">
+                    <span class="text-sm text-slate-300 group-hover:text-white transition">Mở khóa Full Kỹ năng</span>
+                </label>
+
+                <label class="flex items-center gap-3 cursor-pointer select-none group">
+                    <input type="checkbox" id="optLevel" class="w-4 h-4 rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500/30 focus:ring-offset-0 transition cursor-pointer">
+                    <span class="text-sm text-slate-300 group-hover:text-white transition">Max Cấp độ Nhân vật (= 8)</span>
+                </label>
+
+                <label class="flex items-center gap-3 cursor-pointer select-none group">
+                    <input type="checkbox" id="optPet" class="w-4 h-4 rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500/30 focus:ring-offset-0 transition cursor-pointer">
+                    <span class="text-sm text-slate-300 group-hover:text-white transition">Mở khóa Full Thú cưng</span>
+                </label>
+
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <button id="processBtn" class="w-full py-3 px-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 active:scale-[0.98] text-white font-medium rounded-xl shadow-lg shadow-cyan-500/20 transition duration-150 flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Thực hiện & Tải về</span>
+        </button>
+
+        <!-- Log Feedback -->
+        <div id="log" class="hidden mt-4 p-3 bg-dark-900 border border-emerald-500/30 text-emerald-400 rounded-xl font-mono text-xs leading-relaxed whitespace-pre-wrap"></div>
+
     </div>
 
-    <button id="processBtn">Thực hiện & Tải về</button>
-    <div id="log"></div>
-</div>
+    <script>
+        const fileInput = document.getElementById('xmlFileInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const processBtn = document.getElementById('processBtn');
+        const logBox = document.getElementById('log');
 
-<script>
-document.getElementById('processBtn').addEventListener('click', () => {
-    const fileInput = document.getElementById('xmlFileInput');
-    const logBox = document.getElementById('log');
+        // Hiển thị tên file khi người dùng chọn
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileNameDisplay.innerHTML = `Đã chọn: <span class="font-semibold text-cyan-300">${e.target.files[0].name}</span>`;
+            }
+        });
 
-    if (!fileInput.files.length) {
-        alert('Vui lòng chọn 1 file XML trước!');
-        return;
-    }
+        processBtn.addEventListener('click', () => {
+            if (!fileInput.files.length) {
+                alert('Vui lòng chọn 1 file XML trước!');
+                return;
+            }
 
-    const file = fileInput.files[0];
-    const reader = new FileReader();
+            const file = fileInput.files[0];
+            const reader = new FileReader();
 
-    reader.onload = (e) => {
-        let content = e.target.result;
-        
-        // Tìm Target UID để sửa đúng tài khoản đang active
-        let activeUidMatch = content.match(/<string name="last_chilly_uid">(\d+)<\/string>/) 
-                          || content.match(/<string name="last_account_id">(\d+)<\/string>/);
-        let targetUidPattern = activeUidMatch ? activeUidMatch[1] : '\\d+';
+            reader.onload = (e) => {
+                let content = e.target.result;
+                
+                // Tìm Target UID để sửa đúng tài khoản đang active
+                let activeUidMatch = content.match(/<string name="last_chilly_uid">(\d+)<\/string>/) 
+                                  || content.match(/<string name="last_account_id">(\d+)<\/string>/);
+                let targetUidPattern = activeUidMatch ? activeUidMatch[1] : '\\d+';
 
-        const isChar = document.getElementById('optChar').checked;
-        const isSkin = document.getElementById('optSkin').checked;
-        const isSkill = document.getElementById('optSkill').checked;
-        const isLevel = document.getElementById('optLevel').checked;
-        const isPet = document.getElementById('optPet').checked;
+                const isChar = document.getElementById('optChar').checked;
+                const isSkin = document.getElementById('optSkin').checked;
+                const isSkill = document.getElementById('optSkill').checked;
+                const isLevel = document.getElementById('optLevel').checked;
+                const isPet = document.getElementById('optPet').checked;
 
-        // Xử lý Regex an toàn
-        if (isChar) {
-            const regex = new RegExp(`(<string name="${targetUidPattern}_c\\d+_unlock">)(.*?)(<\\/string>)`, 'g');
-            content = content.replace(regex, '$1True$3');
-        }
-        if (isPet) {
-            const regex = new RegExp(`(<string name="${targetUidPattern}_p\\d+_unlock">)(.*?)(<\\/string>)`, 'g');
-            content = content.replace(regex, '$1True$3');
-        }
-        if (isSkin) {
-            const regex = new RegExp(`(<int name="${targetUidPattern}_c\\d+_skin\\d+" value=")([^"]+)(" \\/>)`, 'g');
-            content = content.replace(regex, '$11$3');
-        }
-        if (isSkill) {
-            const regex = new RegExp(`(<int name="${targetUidPattern}_c_.*?_skill_\\d+_unlock" value=")([^"]+)(" \\/>)`, 'g');
-            content = content.replace(regex, '$11$3');
-        }
-        if (isLevel) {
-            const regex = new RegExp(`(<int name="${targetUidPattern}_c\\d+_level" value=")([^"]+)(" \\/>)`, 'g');
-            content = content.replace(regex, '$18$3');
-        }
+                // Xử lý Regex
+                if (isChar) {
+                    const regex = new RegExp(`(<string name="${targetUidPattern}_c\\d+_unlock">)(.*?)(<\\/string>)`, 'g');
+                    content = content.replace(regex, '$1True$3');
+                }
+                if (isPet) {
+                    const regex = new RegExp(`(<string name="${targetUidPattern}_p\\d+_unlock">)(.*?)(<\\/string>)`, 'g');
+                    content = content.replace(regex, '$1True$3');
+                }
+                if (isSkin) {
+                    const regex = new RegExp(`(<int name="${targetUidPattern}_c\\d+_skin\\d+" value=")([^"]+)(" \\/>)`, 'g');
+                    content = content.replace(regex, '$11$3');
+                }
+                if (isSkill) {
+                    const regex = new RegExp(`(<int name="${targetUidPattern}_c_.*?_skill_\\d+_unlock" value=")([^"]+)(" \\/>)`, 'g');
+                    content = content.replace(regex, '$11$3');
+                }
+                if (isLevel) {
+                    const regex = new RegExp(`(<int name="${targetUidPattern}_c\\d+_level" value=")([^"]+)(" \\/>)`, 'g');
+                    content = content.replace(regex, '$18$3');
+                }
 
-        // Tạo link tự động tải file đã sửa về máy
-        const blob = new Blob([content], { type: 'text/xml;charset=utf-8' });
-        const downloadUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = file.name.replace('.xml', '_modded.xml');
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(downloadUrl);
+                // Tạo file tải về
+                const blob = new Blob([content], { type: 'text/xml;charset=utf-8' });
+                const downloadUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = file.name.replace('.xml', '_modded.xml');
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(downloadUrl);
 
-        logBox.style.display = 'block';
-        logBox.textContent = `✔ Đã xử lý xong UID: ${activeUidMatch ? activeUidMatch[1] : 'All'}\n✔ File đã được tải xuống máy!`;
-    };
+                // Hiển thị trạng thái hoàn tất
+                logBox.classList.remove('hidden');
+                logBox.textContent = `✔ Đã xử lý UID: ${activeUidMatch ? activeUidMatch[1] : 'All'}\n✔ File "${a.download}" đã được tải xuống thành công!`;
+            };
 
-    reader.readAsText(file);
-});
-</script>
-
+            reader.readAsText(file);
+        });
+    </script>
 </body>
 </html>
